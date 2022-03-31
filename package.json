@@ -32,7 +32,7 @@
   "scripts": {
     "build": "tsc",
     "build:check": "tsc --noEmit",
-    "bot:start": "ts-node src/bot.ts",
+    "bot:start": "node dist/bot.js",
     "bot:dev": "nodemon --watch 'src/' --exec 'ts-node src/bot.ts' -e ts",
     "server": "node dist/server.js",
     "server:dev": "nodemon --watch 'src/' --exec 'ts-node src/server.ts' -e ts",
