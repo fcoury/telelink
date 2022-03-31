@@ -1,0 +1,10 @@
+{
+  "extends": "@tsconfig/node17/tsconfig.json",
+  "compilerOptions": {},
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
