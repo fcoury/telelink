@@ -24,7 +24,6 @@ const getOne = async () => {
   );
   let doc;
   docs.forEach((_doc) => (doc = _doc));
-  console.log('doc', doc);
   return doc;
 };
 
@@ -41,12 +40,16 @@ app.get('/links', async (req: Request, res: Response<LinksApiResponse>) => {
 });
 
 app.get('/next', async (req: Request, res: Response<NextApiResponse>) => {
+  const { keep } = req.query;
   const doc = await getOne();
 
-  if (!doc)
+  if (!doc) {
     return res.status(404).json({ ok: false, message: 'No further links' });
+  }
 
-  await updateDoc(doc.ref, { viewedAt: serverTimestamp() });
+  if (!keep) {
+    await updateDoc(doc.ref, { viewedAt: serverTimestamp() });
+  }
 
   res.json({
     ok: true,
