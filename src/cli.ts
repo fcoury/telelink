@@ -21,7 +21,8 @@ program
 program.command('next').description('Opens the next unread link.').action(next);
 
 async function list() {
-  const res = await fetch(`${process.env.API_ROOT}/links`);
+  const apiRoot = process.env.API_ROOT || 'https://telelinkx.herokuapp.com';
+  const res = await fetch(`${apiRoot}/links`);
   const result: LinksApiResponse = await res.json();
 
   if (!result.ok) {
