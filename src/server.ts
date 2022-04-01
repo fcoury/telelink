@@ -44,7 +44,7 @@ app.get('/next', async (req: Request, res: Response<NextApiResponse>) => {
   const doc = await getOne();
 
   if (!doc) {
-    return res.status(404).json({ ok: false, message: 'No further links' });
+    return res.status(404).json({ ok: true, message: 'No further links' });
   }
 
   if (!keep) {
