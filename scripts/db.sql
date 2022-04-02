@@ -3,6 +3,6 @@ CREATE TABLE links (
   "url" TEXT NOT NULL,
   "title" TEXT,
   "text" TEXT,
-  "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "viewed_at" TIMESTAMP(3)
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "viewedAt" TIMESTAMP(3)
 );
