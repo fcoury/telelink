@@ -30,18 +30,12 @@ enum Action {
 }
 
 #[derive(Deserialize, Debug)]
-struct Date {
-    seconds: u32,
-    nanoseconds: u32,
-}
-
-#[derive(Deserialize, Debug)]
 struct Link {
     url: String,
     title: String,
-    text: String,
+    text: Option<String>,
     #[serde(rename(deserialize = "createdAt"))]
-    created_at: Option<Date>,
+    created_at: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]

@@ -1,0 +1,8 @@
+CREATE TABLE links (
+  "id" SERIAL PRIMARY KEY,
+  "url" TEXT NOT NULL,
+  "title" TEXT,
+  "text" TEXT,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "viewedAt" TIMESTAMP(3)
+);

@@ -1,37 +1,42 @@
 import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
-import {
-  collection,
-  getDocs,
-  limit,
-  query,
-  serverTimestamp,
-  updateDoc,
-  where,
-} from 'firebase/firestore/lite';
-import { db } from './firebase';
-import { LinksApiResponse, NextApiResponse } from './types';
+import sql from './db';
+import { Link, LinksApiResponse, NextApiResponse } from './types';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-const getOne = async () => {
-  const linksCol = collection(db, 'links');
-  const docs = await getDocs(
-    query(linksCol, where('viewedAt', '==', null), limit(1)),
-  );
-  let doc;
-  docs.forEach((_doc) => (doc = _doc));
-  return doc;
+const getOnePending = async (): Promise<Link | undefined> => {
+  const links = await sql`
+    SELECT id, title, url, text, "createdAt"
+    FROM links
+    WHERE "viewedAt" IS NULL
+    ORDER BY "createdAt" LIMIT 1;
+  `;
+
+  return links[0] as Link | undefined;
+};
+
+type Order = 'createdAt' | 'title';
+const getAll = async (order: Order = 'createdAt'): Promise<Link[]> => {
+  return await sql`
+    SELECT id, title, url, text, "createdAt"
+    FROM links
+    WHERE "viewedAt" IS NULL
+    ORDER BY ${order};
+  `;
+};
+
+const markViewed = async (id: number) => {
+  return await sql`
+    UPDATE links SET "viewedAt" = CURRENT_TIMESTAMP WHERE id=${id};
+  `;
 };
 
 app.get('/links', async (req: Request, res: Response<LinksApiResponse>) => {
-  const linksCol = collection(db, 'links');
-  const data = await getDocs(query(linksCol, where('viewedAt', '==', null)));
-  const links: any[] = [];
-  data.forEach((doc) => links.push(doc.data()));
+  const links = await getAll();
 
   res.json({
     ok: true,
@@ -41,19 +46,19 @@ app.get('/links', async (req: Request, res: Response<LinksApiResponse>) => {
 
 app.get('/next', async (req: Request, res: Response<NextApiResponse>) => {
   const { keep } = req.query;
-  const doc = await getOne();
+  const link = await getOnePending();
 
-  if (!doc) {
-    return res.status(404).json({ ok: true, message: 'No further links' });
+  if (!link) {
+    return res.status(404).json({ ok: false, message: 'No further links' });
   }
 
   if (!keep) {
-    await updateDoc(doc.ref, { viewedAt: serverTimestamp() });
+    await markViewed(link.id);
   }
 
   res.json({
     ok: true,
-    link: doc.data(),
+    link,
   });
 });
 

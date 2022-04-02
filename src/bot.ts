@@ -1,9 +1,8 @@
 import * as cheerio from 'cheerio';
 import * as dotenv from 'dotenv';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore/lite';
 import { Telegraf } from 'telegraf';
+import sql from './db';
 import fetch from './fetch';
-import { db } from './firebase';
 
 dotenv.config();
 
@@ -25,14 +24,11 @@ bot.on('text', async (ctx) => {
         const page = await fetch(url);
         const $ = cheerio.load(await page.text());
         const title = $('title').text();
-        const linksCol = collection(db, 'links');
-        const docRef = await addDoc(linksCol, {
-          title,
-          url,
-          text,
-          createdAt: serverTimestamp(),
-          viewedAt: null,
-        });
+
+        const link = await sql`
+          INSERT INTO links (title, url, text, "createdAt")
+          VALUES (${title}, ${url}, ${text}, CURRENT_TIMESTAMP);
+        `;
 
         ctx.reply(`Added - ${title}`);
         console.log('Added', title);
