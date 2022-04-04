@@ -1,3 +1,4 @@
+import dedent from 'dedent';
 import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import sql from './db';
@@ -19,28 +20,42 @@ const getOnePending = async (): Promise<Link | undefined> => {
   return links[0] as Link | undefined;
 };
 
-type Order = 'createdAt' | 'title';
+type Order = '"createdAt"' | 'title';
+
 const getAll = async ({
-  q=''
-  ,
-  order = 'createdAt',
+  q = '',
+  order = '"createdAt"',
 }: {
   q: string;
   order?: Order;
 }): Promise<Link[]> => {
-  const query = q.split(',').reduce((obj, pair) => {
+  const query: any = q.split(',').reduce((obj: any, pair) => {
     const [key, value] = pair.split(':');
-    obj[key] = value;
+    if (!value) {
+      obj.search = key;
+    } else {
+      obj[key] = value;
+    }
     return obj;
   }, {});
-  console.log(query);
-  
-  return await sql`
+
+  const where = [];
+  if (!query.status || query.status != 'all') {
+    where.push('"viewedAt" IS NULL');
+  }
+  if (query.search) {
+    where.push(`"title" ILIKE '${'%' + query.search + '%'}'`);
+  }
+
+  const whereStr = where.length > 0 ? 'WHERE ' + where.join(' AND ') : '';
+  const selectStr = dedent`
     SELECT id, title, url, text, "createdAt"
     FROM links
-    WHERE "viewedAt" IS NULL
-    ORDER BY ${order};
+    ${whereStr}
+    ORDER BY ${order}
   `;
+
+  return await sql.unsafe(selectStr);
 };
 
 const markViewed = async (id: number) => {
@@ -50,12 +65,20 @@ const markViewed = async (id: number) => {
 };
 
 app.get('/links', async (req: Request, res: Response<LinksApiResponse>) => {
-  const links = await getAll({ q: req.query.q as string });
+  try {
+    const links = await getAll({ q: req.query.q as string });
 
-  res.json({
-    ok: true,
-    links,
-  });
+    res.json({
+      ok: true,
+      links,
+    });
+  } catch (error) {
+    console.error(`Error in query: ${error.query}`, error);
+    res.json({
+      ok: false,
+      message: `Error in query: ${error.query} - ${error.message}`,
+    });
+  }
 });
 
 app.get('/next', async (req: Request, res: Response<NextApiResponse>) => {

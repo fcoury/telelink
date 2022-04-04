@@ -3,9 +3,15 @@ import postgres from 'postgres';
 
 dotenv.config();
 
-const sql =
+const options: any =
   process.env.NODE_ENV === 'production'
-    ? postgres(process.env.DATABASE_URL, { ssl: { rejectUnauthorized: false } })
-    : postgres(process.env.DATABASE_URL);
+    ? { ssl: { rejectUnauthorized: false } }
+    : {};
+if (process.env.DEBUG) {
+  options.debug = (connection, query, params, types) => {
+    console.log(query, params, types);
+  };
+}
+const sql = postgres(process.env.DATABASE_URL, options);
 
 export default sql;
