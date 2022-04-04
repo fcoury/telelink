@@ -20,13 +20,13 @@ pub struct Next {
 
 #[derive(Args, Debug)]
 pub struct Open {
-    #[clap(long, help = "Link id")]
+    #[clap(help = "Link id")]
     pub id: u32,
 }
 
 #[derive(Args, Debug)]
 pub struct Delete {
-    #[clap(long, help = "Link id")]
+    #[clap(help = "Link id")]
     pub id: u32,
 }
 
