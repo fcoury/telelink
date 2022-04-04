@@ -16,6 +16,6 @@ export interface LinksApiResponse extends ApiResponse {
   links?: Link[];
 }
 
-export interface NextApiResponse extends ApiResponse {
+export interface LinkApiResponse extends ApiResponse {
   link?: Link;
 }

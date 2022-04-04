@@ -135,5 +135,5 @@ dist
 # App specific files
 cache
 videos
-telelink/target
+client/target
 .vault_pass
