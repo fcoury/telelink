@@ -2,7 +2,7 @@ import dedent from 'dedent';
 import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import sql from './db';
-import { Link, LinksApiResponse, NextApiResponse } from './types';
+import { Link, LinkApiResponse, LinksApiResponse } from './types';
 
 dotenv.config();
 
@@ -58,11 +58,27 @@ const getAll = async ({
   return await sql.unsafe(selectStr);
 };
 
+const getOne = async (id: number): Promise<Link | undefined> => {
+  const res =
+    await sql`SELECT id, title, url, text, "createdAt" FROM links WHERE id = ${id}`;
+  return res[0] as Link | undefined;
+};
+
 const markViewed = async (id: number) => {
   return await sql`
     UPDATE links SET "viewedAt" = CURRENT_TIMESTAMP WHERE id=${id};
   `;
 };
+
+app.get('/links/:id', async (req: Request, res: Response<LinkApiResponse>) => {
+  const { id } = req.params;
+  const link = await getOne(parseInt(id, 10));
+  if (!link) {
+    res.json({ ok: false, message: `Link with id ${id} not found.` });
+    return;
+  }
+  res.json({ ok: true, link });
+});
 
 app.get('/links', async (req: Request, res: Response<LinksApiResponse>) => {
   try {
@@ -81,7 +97,7 @@ app.get('/links', async (req: Request, res: Response<LinksApiResponse>) => {
   }
 });
 
-app.get('/next', async (req: Request, res: Response<NextApiResponse>) => {
+app.get('/next', async (req: Request, res: Response<LinkApiResponse>) => {
   const { keep } = req.query;
   const link = await getOnePending();
 
