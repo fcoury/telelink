@@ -18,7 +18,7 @@ struct Cli {
 
 #[derive(Subcommand, Debug)]
 enum Action {
-    #[clap(alias = "l", about = "List saved links")]
+    #[clap(alias = "l", about = "Lists unopened links")]
     List(types::List),
     #[clap(
         alias = "n",

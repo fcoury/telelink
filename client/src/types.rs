@@ -3,24 +3,30 @@ use serde::Deserialize;
 
 #[derive(Args, Debug)]
 pub struct List {
-    #[clap(long)]
+    #[clap(long, help = "Lists all links, not only the pending ones")]
     pub all: bool,
+    #[clap(help = "Search term for partial match")]
     pub terms: Option<String>,
 }
 
 #[derive(Args, Debug)]
 pub struct Next {
-    #[clap(long)]
+    #[clap(
+        long,
+        help = "Opens the next unvisited link while keeping it unvisited"
+    )]
     pub keep: bool,
 }
 
 #[derive(Args, Debug)]
 pub struct Open {
+    #[clap(long, help = "Link id")]
     pub id: u32,
 }
 
 #[derive(Args, Debug)]
 pub struct Delete {
+    #[clap(long, help = "Link id")]
     pub id: u32,
 }
 
