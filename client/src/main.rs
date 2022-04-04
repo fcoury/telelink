@@ -18,9 +18,16 @@ struct Cli {
 
 #[derive(Subcommand, Debug)]
 enum Action {
+    #[clap(alias = "l", about = "List saved links")]
     List(types::List),
+    #[clap(
+        alias = "n",
+        about = "Opens the next link in chronological creation order"
+    )]
     Next(types::Next),
+    #[clap(alias = "o", about = "Opens a give link represented by its id")]
     Open(types::Open),
+    #[clap(alias = "del", about = "Deletes a link with a given id")]
     Delete(types::Delete),
 }
 
