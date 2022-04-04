@@ -1,0 +1,19 @@
+version: '3'
+services:
+  web:
+    platform: linux/amd64
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - 3000:3000
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    command: yarn bot
+

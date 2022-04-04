@@ -1,0 +1,62 @@
+---
+- name: Install telelink
+  hosts: all
+  become: true
+  tasks:
+    - name: clone telelink repo
+      git: >
+        repo=ssh://git@github.com/fcoury/telelink.git
+        key_file=/root/.ssh/id_rsa
+        dest=~/telelink
+
+    - name: install prerequisites
+      community.general.yarn:
+        path: ~/telelink
+        state: latest
+
+    - name: builds the dist files
+      command: yarn build
+      args:
+        chdir: ~/telelink
+
+    - name: install pm2
+      community.general.yarn:
+        name: pm2
+        global: yes
+        state: present
+
+    - name: Ensure pm2 is not running
+      command: pm2 kill
+      become: false
+
+    - name: Install pm2-logrotate using PM2
+      command: pm2 install pm2-logrotate
+      become: false
+
+    - name: Delete old pm2 web server process
+      command: pm2 delete telelink-web
+      ignore_errors: yes
+
+    - name: Start pm2 for the web server
+      command: pm2 start yarn --name "telelink-web" -- server
+      become: false
+      args:
+        chdir: ~/telelink
+
+    - name: Delete old pm2 web server process
+      command: pm2 delete telelink-bot
+      ignore_errors: yes
+
+    - name: Start pm2 for the bot
+      command: pm2 start yarn --name "telelink-bot" -- bot:start
+      become: false
+      args:
+        chdir: ~/telelink
+
+    - name: Set PM2 to start on reboot
+      command: pm2 startup systemd
+      become: true
+
+    - name: Save PM2
+      command: pm2 save
+      become: false
