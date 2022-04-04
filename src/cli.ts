@@ -7,7 +7,7 @@ import Conf from 'conf';
 import dotenv from 'dotenv';
 import open from 'open';
 import fetch from './fetch';
-import { LinksApiResponse, NextApiResponse } from './types';
+import { LinkApiResponse, LinksApiResponse } from './types';
 
 dotenv.config();
 
@@ -46,7 +46,7 @@ async function list() {
 
 async function next() {
   const res = await fetch(`${process.env.API_ROOT}/next`);
-  const result: NextApiResponse = await res.json();
+  const result: LinkApiResponse = await res.json();
 
   if (!result.ok) {
     console.log(result.message);
