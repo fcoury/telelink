@@ -5,6 +5,7 @@ use serde::Deserialize;
 pub struct List {
     #[clap(long)]
     pub all: bool,
+    pub terms: Option<String>,
 }
 
 #[derive(Args, Debug)]

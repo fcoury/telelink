@@ -11,6 +11,9 @@ pub async fn run(list: &List) -> Result<(), Error> {
   if list.all {
     filters.push("status:all")
   }
+  if let Some(terms) = &list.terms {
+    filters.push(&terms);
+  }
   let response: LinksResponse =
     reqwest::get(format!("{}/links?q={}", super::url(), filters.join(",")))
       .await?
