@@ -41,6 +41,7 @@ enum Action {
 
 #[derive(Deserialize, Debug)]
 struct Link {
+    id: u32,
     url: String,
     title: String,
     text: Option<String>,
@@ -98,15 +99,15 @@ async fn main() -> Result<(), Error> {
                             }
                             None => "N/A".to_string(),
                         };
-                        println!("{}. {} ({})", i + 1, link.title.yellow(), duration,);
-                        println!("  {}\n", link.url.underline())
+                        println!("{}. {} ({})", link.id, link.title.yellow(), duration,);
+                        println!("   {}\n", link.url.underline())
                     }
                     return Ok(());
                 }
             }
 
             if response.ok {
-                println!("No pending links.")
+                println!("No links found.")
             } else {
                 if let Some(message) = response.message {
                     println!("Error getting links: {}.", message)
