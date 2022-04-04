@@ -35,7 +35,25 @@ pub async fn run(list: &List) -> Result<(), Error> {
           }
           None => "N/A".to_string(),
         };
-        println!("  #{} - {} ({})", link.id, link.title.yellow(), duration,);
+
+        if let Some(terms) = &list.terms {
+          let pos = &link
+            .title
+            .to_lowercase()
+            .find(&terms.to_lowercase())
+            .unwrap();
+          let len = terms.len();
+          let prefix = &link.title[..pos - 0].yellow();
+          let suffix = &link.title[pos + len..].yellow();
+          let word = &link.title[pos + 0..pos + len].bold().underline().yellow();
+          println!(
+            "  #{} - {}{}{} ({})",
+            link.id, prefix, word, suffix, duration,
+          );
+        } else {
+          println!("  #{} - {} ({})", link.id, link.title.yellow(), duration,);
+        }
+
         println!("       {}\n", link.url.underline())
       }
       return Ok(());
