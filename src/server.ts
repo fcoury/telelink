@@ -20,7 +20,21 @@ const getOnePending = async (): Promise<Link | undefined> => {
 };
 
 type Order = 'createdAt' | 'title';
-const getAll = async (order: Order = 'createdAt'): Promise<Link[]> => {
+const getAll = async ({
+  q=''
+  ,
+  order = 'createdAt',
+}: {
+  q: string;
+  order?: Order;
+}): Promise<Link[]> => {
+  const query = q.split(',').reduce((obj, pair) => {
+    const [key, value] = pair.split(':');
+    obj[key] = value;
+    return obj;
+  }, {});
+  console.log(query);
+  
   return await sql`
     SELECT id, title, url, text, "createdAt"
     FROM links
@@ -36,7 +50,7 @@ const markViewed = async (id: number) => {
 };
 
 app.get('/links', async (req: Request, res: Response<LinksApiResponse>) => {
-  const links = await getAll();
+  const links = await getAll({ q: req.query.q as string });
 
   res.json({
     ok: true,
