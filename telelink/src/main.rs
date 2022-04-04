@@ -58,7 +58,7 @@ async fn main() -> Result<(), Error> {
 
     match &value.action {
         Action::List => {
-            let response: LinksResponse = reqwest::get("https://telelinkx.herokuapp.com/links")
+            let response: LinksResponse = reqwest::get("https://telelink.fcoury.com/links")
                 .await?
                 .json()
                 .await?;
@@ -93,7 +93,7 @@ async fn main() -> Result<(), Error> {
             if next.keep {
                 keepstr = "?keep=true";
             }
-            let url = format!("https://telelinkx.herokuapp.com/next{}", keepstr);
+            let url = format!("https://telelink.fcoury.com/next{}", keepstr);
             let response: LinkResponse = reqwest::get(url).await?.json().await?;
             match response.link {
                 Some(link) => {

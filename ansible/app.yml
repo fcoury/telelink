@@ -14,6 +14,13 @@
         path: ~/telelink
         state: latest
 
+    - name: copy env file
+      copy:
+        src: .env.enc
+        dest: ~/telelink/.env
+        decrypt: yes
+        mode: 0644
+
     - name: builds the dist files
       command: yarn build
       args:
@@ -60,3 +67,26 @@
     - name: Save PM2
       command: pm2 save
       become: false
+
+    - name: configure nginx site
+      template:
+        src: nginx.site.conf.j2
+        dest: /etc/nginx/sites-available/{{ domain }}
+        owner: root
+        group: root
+        mode: 0644
+      vars:
+        port: 3000
+
+    - name: enables the new website
+      file:
+        src: /etc/nginx/sites-available/{{ domain }}
+        dest: /etc/nginx/sites-enabled/{{ domain }}
+        state: link
+      notify: restart nginx
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
