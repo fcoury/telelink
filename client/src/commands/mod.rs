@@ -1,3 +1,4 @@
+pub mod delete;
 pub mod list;
 pub mod next;
 pub mod open;

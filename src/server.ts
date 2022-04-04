@@ -80,6 +80,21 @@ app.get('/links/:id', async (req: Request, res: Response<LinkApiResponse>) => {
   res.json({ ok: true, link });
 });
 
+app.delete(
+  '/links/:id',
+  async (req: Request, res: Response<LinkApiResponse>) => {
+    const { id } = req.params;
+    const data =
+      await sql`DELETE FROM links WHERE id = ${id} RETURNING id, title, url, text, "createdAt"`;
+    const link = data[0] as Link | undefined;
+    if (!link) {
+      res.json({ ok: false, message: `Link with id ${id} not found.` });
+      return;
+    }
+    res.json({ ok: true, link });
+  },
+);
+
 app.get('/links', async (req: Request, res: Response<LinksApiResponse>) => {
   try {
     const links = await getAll({ q: req.query.q as string });

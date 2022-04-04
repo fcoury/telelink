@@ -19,6 +19,11 @@ pub struct Open {
     pub id: u32,
 }
 
+#[derive(Args, Debug)]
+pub struct Delete {
+    pub id: u32,
+}
+
 #[derive(Deserialize, Debug)]
 pub struct Link {
     pub id: u32,

@@ -21,6 +21,7 @@ enum Action {
     List(types::List),
     Next(types::Next),
     Open(types::Open),
+    Delete(types::Delete),
 }
 
 #[tokio::main]
@@ -38,6 +39,10 @@ async fn main() -> Result<(), Error> {
         }
         Action::Open(arg) => {
             commands::open::run(arg).await;
+            Ok(())
+        }
+        Action::Delete(arg) => {
+            commands::delete::run(arg).await;
             Ok(())
         }
     }
