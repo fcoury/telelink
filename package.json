@@ -44,6 +44,7 @@
     "server:dev": "nodemon --watch 'src/' --exec 'ts-node src/server.ts' -e ts",
     "cli": "ts-node src/cli.ts",
     "package": "pkg . --output hello",
+    "script": "TS_NODE_PROJECT=\"./tsconfig.commonjs.json\" ts-node",
     "test": "TS_NODE_PROJECT=\"./tsconfig.commonjs.json\" mocha --exit './test/**/*.spec.ts'",
     "test:watch": "TS_NODE_PROJECT=\"./tsconfig.commonjs.json\" mocha --watch './test/**/*.spec.ts'"
   },

@@ -25,8 +25,8 @@ bot.on('text', async (ctx) => {
         const { title, description, image } = extract(await page.text());
 
         const link = await sql`
-          INSERT INTO links (title, url, text, image, "createdAt")
-          VALUES (${title}, ${url}, ${description}, ${image}, CURRENT_TIMESTAMP);
+          INSERT INTO links (title, url, description, image, text, "createdAt")
+          VALUES (${title}, ${url}, ${description}, ${image}, ${text}, CURRENT_TIMESTAMP);
         `;
 
         ctx.reply(`Added - ${title}`);

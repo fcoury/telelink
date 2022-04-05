@@ -50,4 +50,15 @@ describe('extract', async () => {
       expect(data.image).to.eql('https://blog.fidelramos.net/images/fidel.jpg');
     });
   });
+
+  describe.only('with Hacker News without any card info', async () => {
+    beforeEach(async () => {
+      const html = readFixture('hackernews.html');
+      data = extract(html);
+    });
+
+    it('extracts the title', async () => {
+      expect(data.title).to.eql('A database for 2022 | Hacker News');
+    });
+  });
 });
