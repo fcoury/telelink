@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 
 const getOnePending = async (): Promise<Link | undefined> => {
   const links = await sql`
-    SELECT id, title, url, text, "createdAt"
+    SELECT id, title, url, text, image, "createdAt"
     FROM links
     WHERE "viewedAt" IS NULL
     ORDER BY "createdAt" LIMIT 1;
@@ -49,7 +49,7 @@ const getAll = async ({
 
   const whereStr = where.length > 0 ? 'WHERE ' + where.join(' AND ') : '';
   const selectStr = dedent`
-    SELECT id, title, url, text, "createdAt"
+    SELECT id, title, url, text, image, "createdAt"
     FROM links
     ${whereStr}
     ORDER BY ${order}
@@ -60,7 +60,7 @@ const getAll = async ({
 
 const getOne = async (id: number): Promise<Link | undefined> => {
   const res =
-    await sql`SELECT id, title, url, text, "createdAt" FROM links WHERE id = ${id}`;
+    await sql`SELECT id, title, url, text, image, "createdAt" FROM links WHERE id = ${id}`;
   return res[0] as Link | undefined;
 };
 
@@ -85,7 +85,7 @@ app.delete(
   async (req: Request, res: Response<LinkApiResponse>) => {
     const { id } = req.params;
     const data =
-      await sql`DELETE FROM links WHERE id = ${id} RETURNING id, title, url, text, "createdAt"`;
+      await sql`DELETE FROM links WHERE id = ${id} RETURNING id, title, url, text, image, "createdAt"`;
     const link = data[0] as Link | undefined;
     if (!link) {
       res.json({ ok: false, message: `Link with id ${id} not found.` });

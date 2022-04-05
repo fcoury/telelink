@@ -1,7 +1,7 @@
-import * as cheerio from 'cheerio';
 import * as dotenv from 'dotenv';
 import { Telegraf } from 'telegraf';
 import sql from './db';
+import extract from './extract';
 import fetch from './fetch';
 
 dotenv.config();
@@ -22,12 +22,11 @@ bot.on('text', async (ctx) => {
         console.log('Adding URL', url);
         const controller = new AbortController();
         const page = await fetch(url);
-        const $ = cheerio.load(await page.text());
-        const title = $('title').text();
+        const { title, description, image } = extract(await page.text());
 
         const link = await sql`
-          INSERT INTO links (title, url, text, "createdAt")
-          VALUES (${title}, ${url}, ${text}, CURRENT_TIMESTAMP);
+          INSERT INTO links (title, url, text, image, "createdAt")
+          VALUES (${title}, ${url}, ${description}, ${image}, CURRENT_TIMESTAMP);
         `;
 
         ctx.reply(`Added - ${title}`);

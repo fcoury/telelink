@@ -4,6 +4,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "dependencies": {
+    "@types/chai": "^4.3.0",
     "@types/express": "^4.17.13",
     "chalk": "4",
     "chalk-table": "^1.0.2",
@@ -25,7 +26,10 @@
   },
   "devDependencies": {
     "@tsconfig/node17": "^1.0.0",
+    "@types/mocha": "^9.1.0",
     "@types/node": "^17.0.23",
+    "chai": "^4.3.6",
+    "mocha": "^9.2.2",
     "nodemon": "^2.0.15",
     "pkg": "^5.5.2",
     "ts-node": "^10.7.0",
@@ -39,7 +43,9 @@
     "server": "node dist/server.js",
     "server:dev": "nodemon --watch 'src/' --exec 'ts-node src/server.ts' -e ts",
     "cli": "ts-node src/cli.ts",
-    "package": "pkg . --output hello"
+    "package": "pkg . --output hello",
+    "test": "TS_NODE_PROJECT=\"./tsconfig.commonjs.json\" mocha --exit './test/**/*.spec.ts'",
+    "test:watch": "TS_NODE_PROJECT=\"./tsconfig.commonjs.json\" mocha --watch './test/**/*.spec.ts'"
   },
   "pkg": {
     "scripts": "dist/**/*.js"
