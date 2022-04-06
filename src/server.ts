@@ -7,6 +7,8 @@ import { Link, LinkApiResponse, LinksApiResponse } from './types';
 dotenv.config();
 
 const app = express();
+app.use(express.json());
+
 const port = process.env.PORT || 3000;
 
 const getOnePending = async (): Promise<Link | undefined> => {
@@ -99,10 +101,12 @@ app.put(
   '/links/:id/viewed',
   async (req: Request, res: Response<LinkApiResponse>) => {
     const { id } = req.params;
-    console.log('Marking as read', id);
+    const viewed = req.body === 'true';
+    console.log(`Marking as ${viewed ? 'viewed' : 'not viewed'}`, id);
 
-    const data =
-      await sql`UPDATE links SET "viewedAt" = CURRENT_TIMESTAMP WHERE id = ${id} RETURNING id, title, url, description, image, text, "viewedAt", "createdAt"`;
+    const data = viewed
+      ? await sql`UPDATE links SET "viewedAt" = CURRENT_TIMESTAMP WHERE id = ${id} RETURNING id, title, url, description, image, text, "viewedAt", "createdAt"`
+      : await sql`UPDATE links SET "viewedAt" = NULL WHERE id = ${id} RETURNING id, title, url, description, image, text, "viewedAt", "createdAt"`;
     const link = data[0] as Link | undefined;
     if (!link) {
       res.json({ ok: false, message: `Link with id ${id} not found.` });
