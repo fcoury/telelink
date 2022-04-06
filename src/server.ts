@@ -85,7 +85,24 @@ app.delete(
   async (req: Request, res: Response<LinkApiResponse>) => {
     const { id } = req.params;
     const data =
-      await sql`DELETE FROM links WHERE id = ${id} RETURNING id, title, url, description, image, text, "createdAt"`;
+      await sql`DELETE FROM links WHERE id = ${id} RETURNING id, title, url, description, image, text, "viewedAt", "createdAt"`;
+    const link = data[0] as Link | undefined;
+    if (!link) {
+      res.json({ ok: false, message: `Link with id ${id} not found.` });
+      return;
+    }
+    res.json({ ok: true, link });
+  },
+);
+
+app.put(
+  '/links/:id/viewed',
+  async (req: Request, res: Response<LinkApiResponse>) => {
+    const { id } = req.params;
+    console.log('Marking as read', id);
+
+    const data =
+      await sql`UPDATE links SET "viewedAt" = CURRENT_TIMESTAMP WHERE id = ${id} RETURNING id, title, url, description, image, text, "viewedAt", "createdAt"`;
     const link = data[0] as Link | undefined;
     if (!link) {
       res.json({ ok: false, message: `Link with id ${id} not found.` });
