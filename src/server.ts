@@ -101,8 +101,9 @@ app.put(
   '/links/:id/viewed',
   async (req: Request, res: Response<LinkApiResponse>) => {
     const { id } = req.params;
-    const viewed = req.body === 'true';
-    console.log(`Marking as ${viewed ? 'viewed' : 'not viewed'}`, id);
+    const viewed = req.body?.viewed === true;
+    console.log('req.body', req.body);
+    console.log(viewed, `Marking as ${viewed ? 'viewed' : 'not viewed'}`, id);
 
     const data = viewed
       ? await sql`UPDATE links SET "viewedAt" = CURRENT_TIMESTAMP WHERE id = ${id} RETURNING id, title, url, description, image, text, "viewedAt", "createdAt"`
