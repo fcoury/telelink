@@ -27,7 +27,7 @@ const getAll = async ({
   order = '"createdAt"',
 }: {
   q: string;
-  order?: Order;
+  order?: string;
 }): Promise<Link[]> => {
   const query: any = q.split(',').reduce((obj: any, pair) => {
     const [key, value] = pair.split(':');
@@ -97,7 +97,10 @@ app.delete(
 
 app.get('/links', async (req: Request, res: Response<LinksApiResponse>) => {
   try {
-    const links = await getAll({ q: req.query.q as string });
+    const links = await getAll({
+      q: req.query.q as string,
+      order: req.query.order as string,
+    });
 
     res.json({
       ok: true,
