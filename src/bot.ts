@@ -26,7 +26,14 @@ bot.on('text', async (ctx) => {
 
         const link = await sql`
           INSERT INTO links (title, url, description, image, text, "createdAt")
-          VALUES (${title}, ${url}, ${description}, ${image}, ${text}, CURRENT_TIMESTAMP);
+          VALUES (
+            ${title || null},
+            ${url || null},
+            ${description || null},
+            ${image || null},
+            ${text || null},
+            CURRENT_TIMESTAMP
+          );
         `;
 
         ctx.reply(`Added - ${title}`);
