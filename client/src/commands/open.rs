@@ -5,9 +5,8 @@ use std::collections::HashMap;
 
 async fn mark_read(id: u32) -> Result<(), Error> {
   let url = format!("{}/links/{}/viewed", super::url(), id);
-  println!("url: {:?}", url);
-
   let client = reqwest::Client::new();
+
   let mut map = HashMap::new();
   map.insert("viewed", true);
   let res = client.put(&url).json(&map).send().await?;
