@@ -22,6 +22,8 @@ pub struct Next {
 pub struct Open {
     #[clap(help = "Link id")]
     pub id: u32,
+    #[clap(long, help = "Keeps the link unvisited")]
+    pub keep: bool,
 }
 
 #[derive(Args, Debug)]
